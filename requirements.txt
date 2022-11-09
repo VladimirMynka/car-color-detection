@@ -1,0 +1,5 @@
+tqdm
+numpy
+pillow
+pandas
+opencv-python
