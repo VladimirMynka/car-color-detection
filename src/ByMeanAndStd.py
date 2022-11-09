@@ -28,7 +28,6 @@ class ByMeansAndStd(Model):
 
     def predictOne(self, image, top=1, metric=cosine):
         processed = self.processor.process_image(image)
-        # display(processed)
         rgb = get_avg_colors([processed])
         rgb -= self.mean
         dists = [metric(rgb / self.stds[key], self.means[key])
