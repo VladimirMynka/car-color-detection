@@ -5,7 +5,7 @@ import pandas as pd
 class Evaluater:
     def __init__(self, class_predictions):
         self.preds = class_predictions
-        self.lengths = {key:len(self.preds[key]) for key in self.preds}
+        self.lengths = {key: len(self.preds[key]) for key in self.preds}
         self.sum_length = np.sum([self.lengths[key] for key in self.preds])
 
     def recallOneClass(self, class_name):
@@ -14,8 +14,10 @@ class Evaluater:
         return np.sum(tp) / len(tp)
 
     def precisionOneClass(self, class_name):
-        positives = np.sum([np.sum([elem[0] == class_name for elem in self.preds[key]]) for key in self.preds])
-        tp = [(1 if elem[0] == class_name else 0) for elem in self.preds[class_name]]
+        positives = np.sum(
+            [np.sum([elem[0] == class_name for elem in self.preds[key]]) for key in self.preds])
+        tp = [(1 if elem[0] == class_name else 0)
+              for elem in self.preds[class_name]]
         return np.sum(tp) / positives
 
     def f1ScoreOneClass(self, class_name):
@@ -24,7 +26,7 @@ class Evaluater:
         return 2 * recall * precision / (recall + precision)
 
     def metrics(self, metric_function):
-        return {key:metric_function(key) for key in self.preds}
+        return {key: metric_function(key) for key in self.preds}
 
     def recalls(self):
         return self.metrics(self.recallOneClass)
