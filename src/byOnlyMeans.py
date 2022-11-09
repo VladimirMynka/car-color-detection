@@ -6,7 +6,7 @@ from processor import Processor
 from utils import cosine, get_avg_colors
 
 
-class OnlyByMedians(Model):
+class ByOnlyMeans(Model):
     def __init__(self, classes, processor):
         super().__init__(classes, processor)
         self.means = {key: np.random.rand(3) for key in classes}
