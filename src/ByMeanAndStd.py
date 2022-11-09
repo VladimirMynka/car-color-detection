@@ -1,5 +1,5 @@
 from Model import Model
-import tqdm
+from tqdm import tqdm
 import numpy as np
 
 from Editor import *

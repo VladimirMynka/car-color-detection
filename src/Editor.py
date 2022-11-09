@@ -3,7 +3,7 @@ import cv2
 from PIL import Image
 
 
-KERNELS=[
+KERNELS = [
     [
         [3, 0, -3],
         [10, 0, -10],
@@ -40,6 +40,7 @@ KERNELS=[
 def conv(img, kernel):
     return cv2.filter2D(np.array(img), -1, kernel)
 
+
 def get_bounds(img):
     kerneled_imges = [conv(img, np.array(kernel)) for kernel in KERNELS]
     result = kerneled_imges[0]
@@ -49,12 +50,12 @@ def get_bounds(img):
     return Image.fromarray(result)
 
 
-
 def get_only_not_black(image):
     return (np.sum(image, axis=2) != 0).sum()
 
+
 def get_avg_colors(images, len_searcher=get_only_not_black):
-    r,g,b=0,0,0
+    r, g, b = 0, 0, 0
     for image in images:
         arr = np.array(image)
         r1 = arr[:, :, 0].sum()
@@ -63,8 +64,11 @@ def get_avg_colors(images, len_searcher=get_only_not_black):
         l = len_searcher(arr)
         if l == 0:
             l = 1
-        r += r1 / l; g += g1 / l; b += b1 / l
-    return np.array([r,g,b])/len(images)
+        r += r1 / l
+        g += g1 / l
+        b += b1 / l
+    return np.array([r, g, b])/len(images)
+
 
 def process_image(image):
     img = np.array(image)
@@ -90,6 +94,7 @@ def process_image(image):
     step40 = img * step30
     return Image.fromarray(step40)
 
+
 def process_images(images):
     return [process_image(image) for image in images]
 
@@ -111,4 +116,4 @@ def get_std_colors(images, mean, len_searcher=get_only_not_black):
         cur_mean = np.array([r1, g1, b1]).astype(float)
         cur_mean /= l
         rgb += (cur_mean - mean) ** 2
-    return np.sqrt(rgb / len(images)) 
+    return np.sqrt(rgb / len(images))
