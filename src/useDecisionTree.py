@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 from sklearn.tree import DecisionTreeClassifier
 import pickle
@@ -14,20 +15,24 @@ class UseDecisionTree(Model):
         self.clf = DecisionTreeClassifier(max_depth=depth)
 
     def fit(self, data):
-        processed = {key: self.processor.process_images(data[key]) for key in tqdm(data)}
-        X = []
-        y = []
-        for key in tqdm(data):
-            X += [list(get_avg_colors_one(p_image)) + [get_avg_colors_one(image).sum()] for p_image, image in zip(processed[key], data[key])]
-            y += [key] * len(data[key])
-        self.clf.fit(X, y)
+        y = data["Target"]
+        X = data.drop("Target", axis=1)
+        X["processed"] = self.processor.process_images(X["Image"])
+        X["average RGB"] = X.apply(
+            lambda x: get_avg_colors_one(x["processed"]), axis=1)
+        X_final = pd.DataFrame(
+            X["average RGB"].tolist(), columns=["R", "G", "B"])
+        X_final["brightness"] = X.apply(
+            lambda x: get_avg_colors_one(x["Image"]).sum(), axis=1)
+        self.clf.fit(X_final, y)
 
     def predictOne(self, image, top=1, metric=cosine):
         processed = self.processor.process_image(image)
-        x = list(get_avg_colors_one(processed)) + [get_avg_colors_one(image).sum()]
-        predict = self.clf.predict_proba([x])[0]
+        x = pd.DataFrame([list(get_avg_colors_one(
+            processed)) + [get_avg_colors_one(image).sum()]], columns=["R", "G", "B", "brightness"])
+        predict = self.clf.predict_proba(x)[0]
         tops = predict.argsort()[::-1][:top]
-        return {self.classes[i]:predict[i] for i in tops}
+        return {self.classes[i]: predict[i] for i in tops}
 
     def load_weights(self, path):
         dictio = super().load_weights(path)

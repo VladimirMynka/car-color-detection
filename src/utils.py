@@ -31,7 +31,7 @@ def get_std_colors(images, mean, len_searcher=get_only_not_black):
     for image in images:
         cur_mean = get_avg_colors_one(image, len_searcher)
         rgb += (cur_mean - mean) ** 2
-    return np.sqrt(rgb / len(images)) 
+    return np.sqrt(rgb / len(images))
 
 
 def get_avg_colors_one(image, len_searcher=get_only_not_black):
@@ -41,3 +41,7 @@ def get_avg_colors_one(image, len_searcher=get_only_not_black):
     if l == 0:
         l = 1
     return rgb / l
+
+
+def to_dict_group_by(dataframe, grouping_column, value_column):
+    return dataframe.groupby(grouping_column)[value_column].apply(list).to_dict()
