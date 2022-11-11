@@ -1,9 +1,9 @@
 import os
-
+import pandas as pd
 from PIL import Image
 from tqdm import tqdm
 
-from constants import TEST_PATH, TRAIN_PATH
+from constants import TEST_PATH, TRAIN_PATH, SHUFFLE_RANDOM_SEED
 
 
 def load_dir(dir):
@@ -24,3 +24,14 @@ def load_train():
 
 def load_test():
     return load_dir(TEST_PATH)
+
+
+def load_train_dataframe():
+    images, _ = load_train()
+    df = pd.DataFrame({"Image": [image for group in images.values() for image in group],
+                       "Target": [color for color in images.keys() for _ in images[color]]})
+    return df.sample(frac=1, random_state=SHUFFLE_RANDOM_SEED).reset_index(drop=True)
+
+
+def load_test_dataframe():
+    return pd.DataFrame({"Image": load_test()}).sample(frac=1, random_state=SHUFFLE_RANDOM_SEED).reset_index(drop=True)
