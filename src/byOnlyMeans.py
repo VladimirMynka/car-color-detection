@@ -3,7 +3,7 @@ from tqdm import tqdm
 
 from model import Model
 from processor import Processor
-from utils import cosine, get_avg_colors
+from utils import cosine, get_avg_colors, get_avg_colors_one
 
 
 class ByOnlyMeans(Model):
@@ -15,7 +15,8 @@ class ByOnlyMeans(Model):
             self.means[key] -= self.mean
 
     def fit(self, data):
-        data = {key: self.processor.process_images(data[key]) for key in data}
+        if self.processor is not None:
+            data = {key: self.processor.process_images(data[key]) for key in tqdm(data)}
         m = {color: get_avg_colors(data[color]) for color in tqdm(data)}
         mean = np.mean(list(m.values()), axis=0)
         m = {color: m[color] - mean for color in m}
@@ -23,8 +24,9 @@ class ByOnlyMeans(Model):
         self.mean = mean
 
     def predictOne(self, image, top=1, metric=cosine):
-        processed = self.processor.process_image(image)
-        rgb = get_avg_colors([processed])
+        if self.processor is not None:
+            image = self.processor.process_image(image)
+        rgb = get_avg_colors_one(image)
         rgb -= self.mean
         dists = [metric(rgb, self.means[key]) for key in self.classes]
         inds = np.argsort(dists)[::-1][:top]

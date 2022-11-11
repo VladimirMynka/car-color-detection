@@ -18,6 +18,8 @@ class Evaluater:
             [np.sum([elem[0] == class_name for elem in self.preds[key]]) for key in self.preds])
         tp = [(1 if elem[0] == class_name else 0)
               for elem in self.preds[class_name]]
+        if positives == 0:
+            positives = 1
         return np.sum(tp) / positives
 
     def f1ScoreOneClass(self, class_name):
