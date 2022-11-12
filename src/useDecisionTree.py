@@ -22,8 +22,8 @@ class UseDecisionTree(Model):
             y += [key] * len(data[key])
         self.clf.fit(X, y)
 
-    def predictOne(self, image, top=1, metric=cosine):
-        processed = self.processor.process_image(image)
+    def predictOne(self, image, top=1, metric=cosine, logging=False):
+        processed = self.processor.process_image(image, logging=logging)
         x = list(get_avg_colors_one(processed)) + [get_avg_colors_one(image).sum()]
         predict = self.clf.predict_proba([x])[0]
         tops = predict.argsort()[::-1][:top]
@@ -32,12 +32,12 @@ class UseDecisionTree(Model):
     def load_weights(self, path):
         dictio = super().load_weights(path)
         self.classes = np.array(dictio['classes'])
-        self.clf = pickle.loads(dictio['tree'])
+        self.clf = bytes(pickle.loads(dictio['tree']), 'utf-8')
         self.processor = Processor.load(dictio['processor'])
 
     def __dict__(self):
         return {
             'classes': list(self.classes),
             'processor': self.processor.__dict__(),
-            'tree': pickle.dumps(self.clf),
+            'tree': pickle.dumps(self.clf).decode('utf-8'),
         }

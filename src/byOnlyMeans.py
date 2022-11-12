@@ -23,9 +23,9 @@ class ByOnlyMeans(Model):
         self.means = m
         self.mean = mean
 
-    def predictOne(self, image, top=1, metric=cosine):
+    def predictOne(self, image, top=1, metric=cosine, logging=False):
         if self.processor is not None:
-            image = self.processor.process_image(image)
+            image = self.processor.process_image(image, logging=logging)
         rgb = get_avg_colors_one(image)
         rgb -= self.mean
         dists = [metric(rgb, self.means[key]) for key in self.classes]

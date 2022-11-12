@@ -17,7 +17,7 @@ class Model:
     def fit(self, data):
         pass
 
-    def predictOne(self, image, top):
+    def predictOne(self, image, top, logging=False):
         return {random.choice(self.classes):1.0 for _ in range(top)}
 
     def predict(self, images, top=1):
