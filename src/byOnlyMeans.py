@@ -38,12 +38,12 @@ class ByOnlyMeans(Model):
         self.means = {key: np.array(dictio['means'][key])
                       for key in dictio['means']}
         self.mean = dictio['mean']
-        self.processor = Processor.load(dictio['processor'])
-
+        self.processor = Processor.load(dictio['processor']) if dictio['processor'] else None
+        
     def __dict__(self):
         return {
             'classes': list(self.classes),
             'mean': list(self.mean),
             'means': {key: list(self.means[key]) for key in self.means},
-            'processor': self.processor.__dict__()
+            'processor': self.processor.__dict__() if self.processor is not None else None
         }

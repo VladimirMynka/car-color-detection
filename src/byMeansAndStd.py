@@ -43,7 +43,7 @@ class ByMeansAndStd(Model):
         self.stds = {key: np.array(dictio['stds'][key])
                      for key in dictio['stds']}
         self.mean = dictio['mean']
-        self.processor = Processor.load(dictio['processor'])
+        self.processor = Processor.load(dictio['processor']) if dictio['processor'] else None
 
     def __dict__(self):
         return {
@@ -51,5 +51,5 @@ class ByMeansAndStd(Model):
             'mean': list(self.mean),
             'means': {key: list(self.means[key]) for key in self.means},
             'stds': {key: list(self.stds[key]) for key in self.stds},
-            'processor': self.processor.__dict__()
+            'processor': self.processor.__dict__() if self.processor is not None else None
         }
