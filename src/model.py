@@ -17,13 +17,13 @@ class Model:
     def fit(self, data):
         pass
 
-    def predictOne(self, image, top):
+    def predictOne(self, image, top, logging=False):
         return {random.choice(self.classes):1.0 for _ in range(top)}
 
     def predict(self, images, top=1):
         return [list(self.predictOne(image, top).keys()) for image in images]
 
-    def predict_for_dict(self, dictio, top=1):
+    def predictForDict(self, dictio, top=1):
         return {key:self.predict(dictio[key], top) for key in tqdm(dictio)}
 
     def __call__(self, image, top):
@@ -38,7 +38,10 @@ class Model:
     def load_weights(self, path):
         with open(path, 'r') as f:
             weights = json.loads(f.read())
-        return weights
+        self.load_from_dict(weights)
+
+    def load_from_dict(self, dictio):
+        pass
         
     def __dict__(self):
         return {

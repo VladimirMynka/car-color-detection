@@ -25,9 +25,10 @@ class ByMeansAndStd(Model):
         self.means = m
         self.mean = mean
         self.stds = d
+        self.classes = np.array(list(data.keys()))
 
-    def predictOne(self, image, top=1, metric=cosine):
-        processed = self.processor.process_image(image)
+    def predictOne(self, image, top=1, metric=cosine, logging=False):
+        processed = self.processor.process_image(image, logging=logging)
         rgb = get_avg_colors([processed])
         rgb -= self.mean
         dists = [metric(rgb / self.stds[key], self.means[key])
@@ -35,15 +36,14 @@ class ByMeansAndStd(Model):
         inds = np.argsort(dists)[::-1][:top]
         return {self.classes[ind]: dists[ind] for ind in inds}
 
-    def load_weights(self, path):
-        dictio = super().load_weights(path)
+    def load_from_dict(self, dictio):
         self.classes = np.array(dictio['classes'])
         self.means = {key: np.array(dictio['means'][key])
                       for key in dictio['means']}
         self.stds = {key: np.array(dictio['stds'][key])
                      for key in dictio['stds']}
         self.mean = dictio['mean']
-        self.processor = Processor.load(dictio['processor'])
+        self.processor = Processor.load(dictio['processor']) if dictio['processor'] else None
 
     def __dict__(self):
         return {
@@ -51,5 +51,5 @@ class ByMeansAndStd(Model):
             'mean': list(self.mean),
             'means': {key: list(self.means[key]) for key in self.means},
             'stds': {key: list(self.stds[key]) for key in self.stds},
-            'processor': self.processor.__dict__()
+            'processor': self.processor.__dict__() if self.processor is not None else None
         }
