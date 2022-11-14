@@ -41,3 +41,14 @@ def get_avg_colors_one(image, len_searcher=get_only_not_black):
     if l == 0:
         l = 1
     return rgb / l
+
+def dict_to_df(vocab):
+    data = {'path': [], 'color': []}
+    for key in vocab:
+        data['path'] += vocab[key]
+        data['color'] += [key] * len(vocab[key])
+    return data
+
+def df_to_dict(df):
+    keys = df['color'].unique()
+    return {key: list(df[df['color'] == key]['path']) for key in keys}

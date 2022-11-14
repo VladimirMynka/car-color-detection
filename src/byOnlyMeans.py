@@ -22,6 +22,7 @@ class ByOnlyMeans(Model):
         m = {color: m[color] - mean for color in m}
         self.means = m
         self.mean = mean
+        self.classes = np.array(list(data.keys()))
 
     def predictOne(self, image, top=1, metric=cosine, logging=False):
         if self.processor is not None:
@@ -32,14 +33,13 @@ class ByOnlyMeans(Model):
         inds = np.argsort(dists)[::-1][:top]
         return {self.classes[ind]: dists[ind] for ind in inds}
 
-    def load_weights(self, path):
-        dictio = super().load_weights(path)
+    def load_from_dict(self, dictio):
         self.classes = np.array(dictio['classes'])
         self.means = {key: np.array(dictio['means'][key])
                       for key in dictio['means']}
         self.mean = dictio['mean']
         self.processor = Processor.load(dictio['processor']) if dictio['processor'] else None
-        
+
     def __dict__(self):
         return {
             'classes': list(self.classes),

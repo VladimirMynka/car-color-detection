@@ -25,6 +25,8 @@ class Evaluater:
     def f1ScoreOneClass(self, class_name):
         recall = self.recallOneClass(class_name)
         precision = self.precisionOneClass(class_name)
+        if recall == precision == 0:
+            return 0
         return 2 * recall * precision / (recall + precision)
 
     def metrics(self, metric_function):

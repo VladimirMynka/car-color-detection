@@ -5,6 +5,7 @@ PROJECT_PATH = Path(__file__).resolve().parent.parent
 DATA_PATH = PROJECT_PATH / 'data'
 TRAIN_PATH = DATA_PATH / 'train'
 TEST_PATH = DATA_PATH / 'test'
+TEST_VALIDATION = DATA_PATH / 'validated_test.xlsx'
 
 MODELS_PATH = PROJECT_PATH / 'models'
 

@@ -21,6 +21,7 @@ class UseDecisionTree(Model):
             processed = {key: self.processor.process_images(data[key]) for key in tqdm(data)}
         else:
             processed = data
+        self.classes = np.array(list(data.keys()))
         X = []
         y = []
         for key in tqdm(data):
@@ -38,8 +39,7 @@ class UseDecisionTree(Model):
         tops = predict.argsort()[::-1][:top]
         return {self.classes[i]:predict[i] for i in tops}
 
-    def load_weights(self, path):
-        dictio = super().load_weights(path)
+    def load_from_dict(self, dictio):
         self.classes = np.array(dictio['classes'])
         self.processor = Processor.load(dictio['processor']) if dictio['processor'] else None
         with open(dictio['tree'], 'rb') as f:

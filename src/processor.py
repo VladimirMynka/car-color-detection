@@ -26,14 +26,10 @@ class Processor:
         self, 
         bounds_kernels=KERNELS, 
         filter1=80, 
-        when_black=100, 
-        when_white=700, 
         when_grey_std=40,
     ):
         self.bounds_kernels = bounds_kernels
         self.filter1 = filter1
-        self.when_black = when_black
-        self.when_white = when_white
         self.when_grey_std = when_grey_std
 
     def get_bounds(self, image: Image) -> Image:

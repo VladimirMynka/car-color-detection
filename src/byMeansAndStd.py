@@ -25,6 +25,7 @@ class ByMeansAndStd(Model):
         self.means = m
         self.mean = mean
         self.stds = d
+        self.classes = np.array(list(data.keys()))
 
     def predictOne(self, image, top=1, metric=cosine, logging=False):
         processed = self.processor.process_image(image, logging=logging)
@@ -35,8 +36,7 @@ class ByMeansAndStd(Model):
         inds = np.argsort(dists)[::-1][:top]
         return {self.classes[ind]: dists[ind] for ind in inds}
 
-    def load_weights(self, path):
-        dictio = super().load_weights(path)
+    def load_from_dict(self, dictio):
         self.classes = np.array(dictio['classes'])
         self.means = {key: np.array(dictio['means'][key])
                       for key in dictio['means']}
