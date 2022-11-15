@@ -19,6 +19,10 @@ def get_only_not_black(image):
     return (np.sum(image, axis=2) != 0).sum()
 
 
+def get_all(image):
+    return np.size(image) // 3
+
+
 def get_avg_colors(images, len_searcher=get_only_not_black):
     rgb = np.array([0, 0, 0]).astype(float)
     for image in images:

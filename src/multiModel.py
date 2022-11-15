@@ -1,34 +1,18 @@
 from model import Model
-from byOnlyMeans import ByOnlyMeans
-from useDecisionTree import UseDecisionTree
-from processor import Processor
-
-models = {
-    0: {
-        'modelClass': ByOnlyMeans,
-        'processor': Processor(when_grey_std=10),
-        'goto': {
-            'Grey': 1
-        },
-        'union': {
-            'Grey': ['Black', 'Grey', 'White']
-        },
-        'classes': ['Blue', 'Brown', 'Cyan', 'Green', 'Grey', 'Orange', 'Red', 'Violet', 'Yellow']
-    },
-    1: {
-        'modelClass': ByOnlyMeans,
-        'processor': Processor(when_grey_std=-1),
-        'goto': {},
-        'union': {},
-        'classes': ['Black', 'Grey', 'White']
-    }
-}
+from multimodelVariants import fourChildrenMeansRoot as models
 
 class MultiModel(Model):
-    def __init__(self, classes, processor=None, models=models):
-        super().__init__(classes, None)
+    def __init__(self, classes, processor=None, len_searcher=None, models=models):
+        super().__init__(classes, None, None)
         self.modelSchemes = models
-        self.models = {key:models[key]['modelClass'](models[key]['classes'], models[key]['processor']) for key in models}
+        self.models = {
+            key:
+            models[key]['modelClass'](
+                models[key]['classes'], 
+                models[key]['processor'], 
+                **models[key]['kwargs']
+            ) for key in models
+        }
 
     def reformat_data(self, model_id, data):
         new_data = data.copy()
@@ -39,7 +23,6 @@ class MultiModel(Model):
             for color2 in unions[color]:
                 if color2 in new_data:
                     new_list += new_data[color2]
-                    del(new_data[color2])
             new_data[color] = new_list
         colors = list(new_data.keys())
         for color in colors:
@@ -60,4 +43,10 @@ class MultiModel(Model):
             predict = list(self.models[model_id].predictOne(image, top=1, logging=logging).keys())[0]
         return {predict: 1.0}
 
+    def load_from_dict(self, dictio):
+        for model_id in self.models:
+            self.models[model_id].load_from_dict(dictio[model_id])
+
+    def __dict__(self):
+        return {model_id: self.models[model_id].__dict__ for model_id in self.models}
 
