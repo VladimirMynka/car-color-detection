@@ -10,9 +10,10 @@ from constants import MODELS_PATH
 
 
 class Model:
-    def __init__(self, classes, processor):
+    def __init__(self, classes, processor, len_searcher):
         self.classes = np.array(classes)
         self.processor = processor
+        self.len_searcher = len_searcher
     
     def fit(self, data):
         pass

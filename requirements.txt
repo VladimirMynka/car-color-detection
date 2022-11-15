@@ -2,4 +2,6 @@ tqdm
 numpy
 pillow
 pandas
+openpyxl
+tabulate
 opencv-python
