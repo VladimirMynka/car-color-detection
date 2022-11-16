@@ -1,7 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 
-from model import Model
+from models.model import Model
 from processor import Processor
 from utils import cosine, get_avg_colors, get_avg_colors_one, get_only_not_black, get_all
 

@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 from constants import KERNELS
 
@@ -24,18 +25,20 @@ def get_all(image):
 
 
 def get_avg_colors(images, len_searcher=get_only_not_black):
-    rgb = np.array([0, 0, 0]).astype(float)
-    for image in images:
-        rgb += get_avg_colors_one(image, len_searcher)
-    return rgb / len(images)
+    return get_avgs_colors(images, len_searcher).mean(axis=0)
 
 
 def get_std_colors(images, mean, len_searcher=get_only_not_black):
-    rgb = np.array([0, 0, 0]).astype(float)
+    avgs = get_avgs_colors(images, len_searcher)
+    avgs = (avgs - mean) ** 2
+    return np.sqrt(avgs.mean(axis=0))
+
+
+def get_avgs_colors(images, len_searcher=get_only_not_black):
+    rgb = []
     for image in images:
-        cur_mean = get_avg_colors_one(image, len_searcher)
-        rgb += (cur_mean - mean) ** 2
-    return np.sqrt(rgb / len(images)) 
+        rgb.append(get_avg_colors_one(image, len_searcher))
+    return np.array(rgb)
 
 
 def get_avg_colors_one(image, len_searcher=get_only_not_black):
@@ -46,6 +49,7 @@ def get_avg_colors_one(image, len_searcher=get_only_not_black):
         l = 1
     return rgb / l
 
+
 def dict_to_df(vocab):
     data = {'path': [], 'color': []}
     for key in vocab:
@@ -53,6 +57,14 @@ def dict_to_df(vocab):
         data['color'] += [key] * len(vocab[key])
     return data
 
+
 def df_to_dict(df):
     keys = df['color'].unique()
     return {key: list(df[df['color'] == key]['path']) for key in keys}
+
+
+def plot_trained(d):
+    plt.figure(figsize=(20, 10))
+    plt.bar(d.keys(),np.array(list(d.values()))[:,0], color='red', alpha=1)
+    plt.bar(d.keys(),np.array(list(d.values()))[:,1], color='green', alpha=0.8)
+    plt.bar(d.keys(),np.array(list(d.values()))[:,2], color='blue', alpha=0.4)

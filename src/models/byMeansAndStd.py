@@ -1,7 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 
-from model import Model
+from models.model import Model
 from processor import Processor
 from utils import cosine, get_avg_colors, get_std_colors, get_all, get_only_not_black
 
@@ -16,10 +16,10 @@ class ByMeansAndStd(Model):
             self.means[key] -= self.mean
 
     def fit(self, data):
-        data = {key: self.processor.process_images(data[key]) for key in data}
+        if self.processor is not None:
+            data = {key: self.processor.process_images(data[key]) for key in data}
         m = {color: get_avg_colors(data[color], self.len_searcher) for color in tqdm(data)}
-        d = {color: get_std_colors(data[color], m[color], self.len_searcher)
-             for color in tqdm(data)}
+        d = {color: get_std_colors(data[color], m[color], self.len_searcher) for color in tqdm(data)}
         mean = np.mean(list(m.values()), axis=0)
         m = {color: (m[color] - mean) / d[color] for color in m}
         self.means = m
@@ -28,8 +28,9 @@ class ByMeansAndStd(Model):
         self.classes = np.array(list(data.keys()))
 
     def predictOne(self, image, top=1, metric=cosine, logging=False):
-        processed = self.processor.process_image(image, logging=logging)
-        rgb = get_avg_colors([processed], self.len_searcher)
+        if self.processor is not None:
+            image = self.processor.process_image(image, logging=logging)
+        rgb = get_avg_colors([image], self.len_searcher)
         rgb -= self.mean
         dists = [metric(rgb / self.stds[key], self.means[key])
                  for key in self.classes]

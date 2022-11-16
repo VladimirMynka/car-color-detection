@@ -1,6 +1,5 @@
-from model import Model
-from byOnlyMeans import ByOnlyMeans
-from useDecisionTree import UseDecisionTree
+from models.byOnlyMeans import ByOnlyMeans
+from models.useDecisionTree import UseDecisionTree
 from processor import Processor
 from utils import get_only_not_black, get_all
 
@@ -54,5 +53,11 @@ fourChildrenMeansRoot = {
         'union': {},
         'classes': ['Green', 'Yellow'],
         'kwargs': {}
+    }
+}
+
+greyAndColour = {
+    0: {
+        
     }
 }
