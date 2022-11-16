@@ -1,5 +1,5 @@
-from model import Model
-from multimodelVariants import fourChildrenMeansRoot as models
+from models.model import Model
+from models.multimodelVariants import fourChildrenMeansRoot as models
 
 class MultiModel(Model):
     def __init__(self, classes, processor=None, len_searcher=None, models=models):
